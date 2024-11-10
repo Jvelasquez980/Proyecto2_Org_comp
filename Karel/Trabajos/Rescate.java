@@ -55,14 +55,16 @@ class Rescate extends Robot implements Runnable {
                 }
                 this.acerca = false;
                 this.buscamos = true;
-            } else if (this.buscamos) {
+            } else if (this.buscamos == true && this.nojabrimospa == false) {
 
                 while (getStreet() < 9 && this.inside == false) {
                     if (frontIsClear()) {
-                        move();
-                        this.inside = true;
                         entX = getAvenue();
                         entY = getStreet();
+                        move();
+                        this.inside = true;
+                        this.buscamos = false;
+                        System.out.println("Entré");
 
                     } else {
                         turnLeft();
@@ -80,8 +82,13 @@ class Rescate extends Robot implements Runnable {
                 }
                 while (getAvenue() < 15 && this.inside == false) {
                     if (frontIsClear()) {
+                        entX = getAvenue();
+                        entY = getStreet();
                         move();
                         this.inside = true;
+                        this.buscamos = false;
+                        System.out.println("Entré");
+
                     } else {
                         turnLeft();
                         move();
@@ -90,6 +97,7 @@ class Rescate extends Robot implements Runnable {
                         turnLeft();
                     }
                 }
+            }else
                 if (this.inside && this.nojabrimospa == false) {
                     int c = 0;
                     while (true) {
@@ -98,6 +106,7 @@ class Rescate extends Robot implements Runnable {
                                 recogerPersonas();
                                 if (this.personasRescatadas == 4) {
                                     this.nojabrimospa = true;
+                                    System.out.println("Meloski");
                                     break;
                                 }
                             }
@@ -114,15 +123,20 @@ class Rescate extends Robot implements Runnable {
                             c = c + 1;
                         }
                     }
-                } else if (this.nojabrimospa && this.inside == true) {
+                } else if (this.nojabrimospa == true && this.inside == true) {
                     turnLeft();
                     turnLeft();
                     int c = 0;
                     while (true) {
-                        
+
                         if (frontIsClear() && c != 2) {
                             move();
                             c = 0;
+                            if (getAvenue() == entX && getStreet() == entY) {
+                                this.inside = false;
+                                System.out.println("Salí");
+                                break;
+                            }
 
                         } else if (c != 2) {
                             turnLeft();
@@ -132,9 +146,42 @@ class Rescate extends Robot implements Runnable {
                             c = c + 1;
                         }
                     }
-                }
-            }
+                } else if (this.nojabrimospa == true && this.inside == false) {
+                    if (getAvenue() == 15 && getStreet() != 9) {
+                        turnLeft();
+                        while (getStreet() != 9) {
+                            move();
+                        }
+                    } else if (getStreet() == 9 && getAvenue() != 5) {
+                        turnLeft();
+                        while (getAvenue() != 5) {
+                            move();
 
+                        }
+
+                    } else if (getAvenue() == 5 && getStreet() != 1) {
+                        turnLeft();
+                        while (getStreet() != 1) {
+                            move();
+                        }
+
+                    } else if (getStreet() == 1 && getAvenue() != 1) {
+                        turnLeft();
+                        turnLeft();
+                        turnLeft();
+                        while (getAvenue() != 1) {
+                            move();
+                        }
+                    } else if (getStreet() == 1 && getAvenue() == 1) {
+                        while (anyBeepersInBeeperBag()) {
+                            putBeeper();
+                            
+                        }
+                        turnOff();
+                    }
+                }
+
+            
         }
     }
 
