@@ -16,6 +16,7 @@ class Rescate extends Robot implements Runnable {
     private boolean atrapados;
     public int entX;
     public int entY;
+    private int c;
   
 
     public Rescate(int id, int street, int avenue, Direction direction, int beepers, Color color) {
@@ -38,9 +39,10 @@ class Rescate extends Robot implements Runnable {
     }
 
     public void explorarAreaRiesgo() {
+        this.c = 0;
         while (true) {
 
-            if (this.init) {
+            if (this.init) {  // En este paso se inicia
                 while (facingSouth() == false) {
                     turnLeft();
                 }
@@ -52,22 +54,24 @@ class Rescate extends Robot implements Runnable {
                 }
                 this.init = false;
                 this.acerca = true;
-            } else if (this.acerca) {
+            } else if (this.acerca) { //Se acercan al area de riesgo
                 while (getAvenue() != 5) {
                     move();
                 }
                 this.acerca = false;
                 this.buscamos = true;
-            } else if (this.buscamos == true && this.nojabrimospa == false && entX == 0 && entY == 0) {
+            }
+            
+            
+            else if (this.buscamos == true && this.nojabrimospa == false && entX == 0 && entY == 0) { //Empiezan a buscar rodeando el area de riesgo
 
                 while (getStreet() < 9 && this.inside == false) {
                     if (frontIsClear()) {
-                        entX = getAvenue();
+                        entX = getAvenue(); // Guardamos la entrada del recito para poder llegar mas rapido la proxima
                         entY = getStreet();
                         move();
                         this.inside = true;
                         this.buscamos = false;
-                        System.out.println("Entré");
 
                     } else {
                         turnLeft();
@@ -83,14 +87,13 @@ class Rescate extends Robot implements Runnable {
                     turnLeft();
                     turnLeft();
                 }
-                while (getAvenue() < 15 && this.inside == false) {
+                while (getAvenue() < 15 && this.inside == false) { //Comienza a buscar la entrada del area de riesgo
                     if (frontIsClear()) {
                         entX = getAvenue();
                         entY = getStreet();
                         move();
                         this.inside = true;
                         this.buscamos = false;
-                        System.out.println("Entré");
 
                     } else {
                         turnLeft();
@@ -100,10 +103,8 @@ class Rescate extends Robot implements Runnable {
                         turnLeft();
                     }
                 }
-            } else if (this.inside == true && this.nojabrimospa == false && RescateManager.vacio != true ) {
-                int c = 0;
+            } else if (this.inside == true && this.nojabrimospa == false && RescateManager.vacio != true ) { // Al encontrar la entrada del edificio se empieza a recorrer el mismo, este proceso se detiene si se dan cuenta que no hay mas civiles dentro del edificio
                 while (RescateManager.vacio == false) {
-                    System.err.println(RescateManager.vacio);
                     if (nextToABeeper() && this.nojabrimospa == false) {
                         this.atrapados = true;
                         if (!nextToARobot()) {
@@ -114,54 +115,68 @@ class Rescate extends Robot implements Runnable {
                             }
                         }
                     }
-                    if (c > 4 && this.atrapados == false && this.nojabrimospa == false){
+                    if (this.c > 4 && this.atrapados == false && this.nojabrimospa == false){
                         RescateManager.vacio = true;
                         this.nojabrimospa = true;
                         break;
-                    } else if(c > 4 && this.atrapados == true){
+                    } else if(this.c > 4 && this.atrapados == true){
                         this.nojabrimospa = true;
                         break;
                     }
-                    else if (frontIsClear() && c != 2) {
+                    else if (frontIsClear() && this.c != 2) {
                         move();
-                        c = 0;
+                        this.c = 0;
 
-                    } else if (c != 2) {
+                    } else if (this.c != 2) {
                         turnLeft();
-                        c = c + 1;
-                    } else if (c == 2) {
+                        this.c = this.c + 1;
+                    } else if (this.c == 2) {
                         turnLeft();
-                        c = c + 1;
+                        this.c = this.c + 1;
                     }
                 }
                 if (RescateManager.vacio == true){
                     this.nojabrimospa = true;
                 }
             } else if (this.nojabrimospa == true && this.inside == true) {
-                turnLeft();
-                turnLeft();
-                int c = 0;
+                if (this.c == 0){
+
+                    turnLeft();
+                    turnLeft();
+                }else if(this.c == 1){
+                    turnLeft();
+                }else if(this.c == 2){
+
+                }else if(this.c == 3){
+                    turnLeft();
+                    turnLeft();
+                    turnLeft();
+                }else if(this.c == 4){
+                    turnLeft();
+                    turnLeft();
+                }else if (this.c == 5){
+                    turnLeft();
+                }
+                this.c = 0;
                 while (true) {
-                    System.err.println(RescateManager.vacio);
-                    if (frontIsClear() && c != 2) {
+                    if (frontIsClear() && this.c != 2) {
                         move();
-                        c = 0;
+                        this.c = 0;
                         if (getAvenue() == entX && getStreet() == entY) {
                             this.inside = false;
                             this.atrapados = false;
                             break;
                         }
 
-                    } else if (c != 2) {
+                    } else if (this.c != 2) {
                         turnLeft();
-                        c = c + 1;
-                    } else if (c == 2) {
+                        this.c = this.c + 1;
+                    } else if (this.c == 2) {
                         turnLeft();
-                        c = c + 1;
+                        this.c = this.c + 1;
                     }
                 }
             } else if (this.nojabrimospa == true && this.inside == false) {
-                System.err.println(RescateManager.vacio);
                 if (getAvenue() == 15 && getStreet() != 9) {
                     while (!facingNorth()) {
                         turnLeft();
@@ -304,7 +319,7 @@ class Rescate extends Robot implements Runnable {
     }
 
     public static void main(String[] args) {
-        World.setDelay(5); // Configura la velocidad al mínimo
+        World.setDelay(7); // Configura la velocidad al mínimo
         World.readWorld("Mundo.kwld");
         World.setVisible(true);
 
