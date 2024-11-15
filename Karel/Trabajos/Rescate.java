@@ -209,6 +209,12 @@ class Rescate extends Robot implements Runnable {
         }
         this.c = 0;
         while (true) {
+            if (nextToABeeper() && RescateManager.vacio == false) {
+                this.atrapados = true;
+                if (!nextToARobot() && this.personasRescatadas != 4) {
+                    recogerPersonas();
+                }
+            }
             if (frontIsClear() && this.c != 2) {
                 move();
                 this.c = 0;
