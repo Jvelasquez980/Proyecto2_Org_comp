@@ -1,3 +1,3 @@
-java -cp  ".;KarelJRobot.jar"  Rescate -r 10
+java -cp  ".;KarelJRobot.jar"  Rescate -r 120
 pause
 exit

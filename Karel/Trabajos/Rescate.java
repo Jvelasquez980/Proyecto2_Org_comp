@@ -357,6 +357,9 @@ class Rescate extends Robot implements Runnable {
         World.setVisible(true);
 
         int cantidadRobots = Integer.parseInt(args[1]); // Captura la cantidad de robots desde el argumento `-r`
+        if (cantidadRobots > 15){
+            cantidadRobots = 15; // Si la cantidad de robots es mayor a 15, colocamos 15
+        }
         for (int i = 0; i < cantidadRobots; i++) {
             Rescate robot = new Rescate(i + 1, i + 1, 1, East, 0, getRandomColor());
             Thread thread = new Thread(robot);
